@@ -1,0 +1,24 @@
+version: "3"
+
+services:
+
+  backend:
+    build: ./server
+    #container_name: todo-backend
+    image: vinayairan/todo-backend:latest
+    ports:
+      - "8000:3000"
+    # environment:
+    #   - MONGO_URI=mongodb+srv://hloairan_db_user:ptbck123@cluster0.zjjhivj.mongodb.net/todo
+    #   - SECRET_KEY=1234567890HGVHGH
+    env_file:
+    - .env
+
+  frontend:
+    build: ./vite-project
+    image: vinayairan/todo-frontend:latest
+    # container_name: todo-frontend
+    ports:
+      - "5173:5173"
+    depends_on:
+      - backend
