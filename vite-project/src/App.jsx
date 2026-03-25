@@ -5,6 +5,7 @@ import Login from './pages/Login';
 import { Routes, Route } from "react-router-dom";
 import Home from './pages/Home';
 import Signup from './pages/Signup'
+import { Toaster } from "react-hot-toast";
 
 
 function App() {
@@ -13,6 +14,7 @@ function App() {
 
   return (
     <>
+      <Toaster reverseOrder={false} />
       <Routes>
       <Route path="/" element={<Home />} />
       <Route path="/login" element={<Login />} />

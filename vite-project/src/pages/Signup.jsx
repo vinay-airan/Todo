@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { Navigate, useNavigate } from 'react-router-dom';
+import toast from 'react-hot-toast';
 
 
 const Signup = () => {
@@ -9,16 +10,16 @@ const Signup = () => {
     const signuphandler = async()=>{
         try{
             if(!fullname||!email||!password){
-                alert("please enter email or password");
+                toast.message("please enter email or password");
                 return ;
             }
             const res = await axios.post("http://localhost:8000/api/users/register",{fullname,email,password},{ withCredentials: true });
             console.log(res.data);
-            alert("signup Successful");
+            toast.success("signup Successful");
             navigate('/login');
         }catch(error){
             console.log(error.message);
-            alert(error.message,"signup failed")
+            toast.error(error.message,"signup failed")
         }
     }
     const [fullname,setFullname] = useState("");

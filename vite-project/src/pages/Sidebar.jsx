@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import toast from "react-hot-toast";
 import axios from 'axios';
 
 export const Sidebar = () => {
@@ -33,11 +34,12 @@ export const Sidebar = () => {
             : todo
         )
       );
-      alert("done");
+      toast.success("updated successfully");
       setIsModalOpen(false);
 
     } catch (error) {
       console.log(error.response?.data || error.message);
+      toast.error("Something went wrong");
     }
   };
 

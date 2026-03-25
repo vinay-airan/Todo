@@ -4,6 +4,7 @@ import axios from "axios";
 import Navbar from './Navbar';
 import { useNavigate, Outlet } from 'react-router-dom';
 import { Sidebar } from './Sidebar';
+import toast from 'react-hot-toast';
 
 
 function Home() {
@@ -31,13 +32,13 @@ function Home() {
         }
       );
       if (res.data.success) {
-        alert("Todo Added Successfully");
+        toast.success("Todo Added Successfully");
       }
 
 
     } catch (error) {
       console.log(error.response?.data || error.message);
-      alert("Error adding todo");
+      toast.error("Error adding todo");
 
     }
     console.log(title, description);
