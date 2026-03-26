@@ -98,7 +98,7 @@ function Home() {
             <div className='flex  justify-center h-[7vh]'>
               <button
                 onClick={addtodohandler}
-                className='bg-amber-950 mt-2 text-amber-50 cursor-text flex text-xl justify-center w-[50%] p-4 rounded'
+                className='bg-amber-950 hover:bg-amber-900 mt-2 text-amber-50  flex text-xl justify-center w-[50%] p-4 rounded'
               >
                 add todo
               </button>

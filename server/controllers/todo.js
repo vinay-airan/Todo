@@ -56,19 +56,35 @@ export const getTodos = async (req, res) => {
     }
 };
 
-export const updateTodo = async (req, res) => { 
-    try {
-        const { id } = req.params;
-        const { title, description } = req.body;
-        const updatedTodo = await Todo.findByIdAndUpdate(id, { title, description }, { new: true });
-        if (!updatedTodo) {
-            return res.status(404).json({ message: "Todo not found" });
-        }
-        res.status(200).json({ message: "Todo updated successfully", todo: updatedTodo });
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: "Server error" });
+export const updateTodo = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { title, description, completed } = req.body;
+
+    const updateFields = {};
+
+    if (title !== undefined) updateFields.title = title;
+    if (description !== undefined) updateFields.description = description;
+    if (completed !== undefined) updateFields.completed = completed;
+
+    const updatedTodo = await Todo.findByIdAndUpdate(
+      id,
+      updateFields,
+      { new: true }
+    );
+
+    if (!updatedTodo) {
+      return res.status(404).json({ message: "Todo not found" });
     }
+    res.status(200).json({
+      success: true,
+      todo: updatedTodo
+    });
+
+  } catch (error) {
+    console.error("UPDATE ERROR:", error);
+    res.status(500).json({ message: error.message });
+  }
 };
 
 export const deleteTodo = async (req, res) => {

@@ -44,10 +44,10 @@ const Login = () => {
                     <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder='password' className='bg-black text-amber-50 cursor-text   flex justify-between  w-[50%] p-4  rounded'></input>
                 </div>
                 <div className='flex justify-center h-[7vh]'>
-                    <button onClick={loginhandler} className='bg-amber-950 mt-2 text-amber-50 cursor-text sm:text-xl   flex text-[20px]  justify-center  w-[50%] p-4  rounded'>login</button>
+                    <button onClick={loginhandler} className='bg-amber-950 hover:bg-amber-900 mt-2 text-amber-50 cursor-text sm:text-xl   flex text-[20px]  justify-center  w-[50%] p-4  rounded'>login</button>
                 </div>
                 <div className='flex justify-center h-[7vh]'>
-                    <button onClick={() => navigate("/signup")} className='bg-amber-950 mt-2 text-amber-50 cursor-text sm:text-xl   flex text-[20px]  justify-center  w-[50%] p-4  rounded'>
+                    <button onClick={() => navigate("/signup")} className='bg-amber-950 hover:bg-amber-900 mt-2 text-amber-50 cursor-text sm:text-xl   flex text-[20px]  justify-center  w-[50%] p-4  rounded'>
                         Signup
                     </button>
                 </div>

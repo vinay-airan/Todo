@@ -8,6 +8,7 @@ export const Sidebar = () => {
   const [selectedTodo, setSelectedTodo] = useState(null);
   const [updatedTitle, setUpdatedTitle] = useState("");
   const [updatedDesc, setUpdatedDesc] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const openUpdateModal = (todo) => {
     setSelectedTodo(todo);
@@ -43,8 +44,31 @@ export const Sidebar = () => {
     }
   };
 
+  const toggleStatus = async (id, currentStatus) => {
+    try {
+      const res = await axios.put(
+        `http://localhost:8000/api/todos/${id}`,
+        { completed: !currentStatus },
+        { withCredentials: true }
+      );
+
+      // UI update
+      setData(prev =>
+        prev.map(todo =>
+          todo._id === id
+            ? { ...todo, completed: !currentStatus }
+            : todo
+        )
+      );
+
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   const deletehandler = async (id) => {
     try {
+      if (!window.confirm("Delete this todo?")) return;
       const res = await axios.delete(
         `http://localhost:8000/api/todos/${id}`,
         {
@@ -61,20 +85,28 @@ export const Sidebar = () => {
 
   const gettodohandler = async () => {
     try {
-      const res = await axios.get(
-        "http://localhost:8000/api/todos/",
-        { withCredentials: true }
-      );
+      setLoading(true);
 
-      if (Array.isArray(res.data)) {
-        setData(res.data);
-      } else {
-        setData([]);
+      const start = Date.now();
+
+      const res = await axios.get("http://localhost:8000/api/todos/", {
+        withCredentials: true
+      });
+
+      const end = Date.now();
+      const diff = end - start;
+
+      // minimum 500ms loading dikhana
+      if (diff < 500) {
+        await new Promise(resolve => setTimeout(resolve, 500 - diff));
       }
 
+      setData(res.data);
+
     } catch (error) {
-      console.log(error.response?.data || error.message);
-      setData([]);
+      console.log(error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -88,44 +120,66 @@ export const Sidebar = () => {
 
       <h2 className="text-2xl font-bold mb-4">Your Todos</h2>
 
-      {data.length === 0 ? (
-        <p className="text-gray-700">No todos yet</p>
-      ) : (
-<div className="space-y-4">
-  {data.map((todo) => (
-    <div
-      key={todo._id}
-      className="bg-white rounded-lg p-4 shadow-md overflow-hidden"
-    >
-      <div className="font-semibold flex justify-between items-start gap-3 text-lg text-gray-800">
+      {
+        loading ? (
+          <div className="flex justify-center items-center h-40">
+            <div className="w-10 h-10 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+          </div>
+        ) :
+          data.length === 0 ? (
+            <p className="text-gray-700">No todos yet</p>
+          ) :
+            <div className="space-y-4">
+              {loading ? (<p>Loading...</p>) : data.length === 0 ? (
+                <p>No todos yet</p>
+              ) : data.map((todo) => (
+                <div
+                  key={todo._id}
+                  className="bg-white rounded-lg p-4 shadow-md overflow-hidden"
+                >
+                  <div className="font-semibold flex justify-between items-start gap-3 text-lg text-gray-800">
 
-<div className="wrap-break-word max-w-[70%] min-w-0">
-  {todo.title}
-</div>
-        <div className="flex">
-          <button
-            onClick={() => openUpdateModal(todo)}
-            className="mr-2 bg-black text-white px-3 py-1 rounded-2xl"
-          >
-            update
-          </button>
+                    <div className="wrap-break-word max-w-[70%] min-w-0">
+                      {todo.title}
+                    </div>
+                    <div className="flex">
+                      <button
+                        onClick={() => toggleStatus(todo._id, todo.completed)}
+                        className={`px-3  mr-2 py-1 rounded-2xl text-white ${todo.completed ? "bg-green-600 hover:bg-green-800" : "bg-yellow-500 hover:bg-yellow-700"
+                          }`}
+                      >
+                        {todo.completed ? "Completed" : "Pending"}
+                      </button>
+                      <button
+                        onClick={() => openUpdateModal(todo)}
+                        className="mr-2 bg-amber-600 hover:bg-amber-700 text-white px-3 py-1 rounded-2xl"
+                      >
+                        update
+                      </button>
 
-          <button
-            onClick={() => deletehandler(todo._id)}
-            className="bg-red-400 px-3 py-1 rounded-2xl"
-          >
-            delete
-          </button>
-        </div>
-      </div>
+                      <button
+                        onClick={() => deletehandler(todo._id)}
+                        className="bg-red-400 hover:bg-red-500 px-3 py-1 rounded-2xl"
+                      >
+                        delete
+                      </button>
+                    </div>
+                  </div>
 
-<p className="text-gray-700 mt-2 wrap-break-word whitespace-pre-wrap max-h-28 overflow-y-auto pr-2">
-  {todo.description}
-</p>
-    </div>
-  ))}
-</div>
-      )}
+                  <p className="text-gray-700 mt-2 wrap-break-word whitespace-pre-wrap max-h-28 overflow-y-auto pr-2">
+                    {todo.description}
+                  </p>
+                  <p className="text-gray-400 text-xs mt-1 text-right">
+                    {new Date(todo.createdAt).toLocaleString("en-IN", {
+                      dateStyle: "medium",
+                      timeStyle: "short"
+                    })}
+                  </p>
+                  
+                </div>
+              ))}
+            </div>
+      }
 
       {isModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center">
